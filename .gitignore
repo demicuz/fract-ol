@@ -1,0 +1,10 @@
+.cache/
+*.json
+fract-ol
+*.sublime-workspace
+*.o
+
+configure
+LICENSE
+Makefile.gen
+Makefile.mk
