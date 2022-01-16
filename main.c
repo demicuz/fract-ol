@@ -1,13 +1,20 @@
-#include <libft.h>
-#include <mlx.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <libft.h>
+#include <mlx.h>
 
-#include <structs.h>
 #include <mlx_utils.h>
 #include <keycodes.h>
+#include <params.h>
 
 int	mouse_hook(int keycode, t_app *app)
+{
+	printf("Hello from key %d\n", keycode);
+	// mlx_put_image_to_window(app->mlx, app->win, app->img->img_ptr, 0, 0);
+	return (0);
+}
+
+int	key_hook(int keycode, t_app *app)
 {
 	if (keycode == ESC)
 		exit(0);
@@ -23,25 +30,22 @@ int	main(void)
 	t_imgdata	img;
 
 	mlx = mlx_init();
-	win = mlx_new_window(mlx, 1400, 900, "fract-ol");
-	img.img_ptr = mlx_new_image(mlx, 1000, 900);
+	win = mlx_new_window(mlx, W, H, "fract-ol");
+	img.img_ptr = mlx_new_image(mlx, VIEW_W, VIEW_H);
 	img.addr = mlx_get_data_addr(img.img_ptr, &img.bits_per_pixel, &img.line_length, &img.endian);
+	img.width = VIEW_W;
+	img.height = VIEW_H;
 
-	for (int y = 0; y < 900; ++y)
-	{
-		for (int x = 0; x < 1000; ++x)
-		{
-			unsigned char g = x * 255 / 1000;
-			unsigned char b = y * 255 / 900;
-			img_put_pixel(&img, x, y, rgb_to_int(0, g, b));
-		}
-	}
+	img_fill(&img, 0x00AAFF);
 
 	t_app app;
 	app.mlx = mlx;
 	app.win = win;
 	app.img = &img;
-	mlx_key_hook(win, mouse_hook, &app);
+	mlx_mouse_hook(win, mouse_hook, &app);
+	mlx_key_hook(win, key_hook, &app);
+	// mlx_loop_hook();
+	// mlx_hook();
 
 	// sleep(1);
 	mlx_put_image_to_window(mlx, win, img.img_ptr, 0, 0);

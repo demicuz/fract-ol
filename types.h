@@ -1,5 +1,5 @@
-#ifndef STRUCTS_H
-# define STRUCTS_H
+#ifndef TYPES_H
+# define TYPES_H
 
 typedef struct s_imgdata
 {
@@ -8,6 +8,9 @@ typedef struct s_imgdata
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+
+	int width;
+	int height;
 }	t_imgdata;
 
 typedef struct	s_vars
@@ -32,5 +35,7 @@ typedef struct	s_app
 	t_imgdata	*img;
 	t_fractal	*fract;
 }	t_app;
+
+typedef unsigned int t_color;
 
 #endif 
