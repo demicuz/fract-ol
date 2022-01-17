@@ -2,7 +2,7 @@ NAME		= fract-ol
 
 # TODO
 CC			= clang
-CFLAGS		= -g -Wall#-Werror -Wextra
+CFLAGS		= -g -Wall -O3#-Werror -Wextra
 
 LIBFT_DIR	= libft
 LIBFT		= $(LIBFT_DIR)/libft.a

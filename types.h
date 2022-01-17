@@ -9,8 +9,8 @@ typedef struct s_imgdata
 	int		line_length;
 	int		endian;
 
-	int width;
-	int height;
+	int	width;
+	int	height;
 }	t_imgdata;
 
 typedef struct	s_vars
@@ -20,20 +20,21 @@ typedef struct	s_vars
 	t_imgdata	*img;
 }	t_vars;
 
-typedef struct	s_fractal
+typedef struct	s_frdata
 {
-	long double x;
-	long double y;
-	long double zoom;
+	double x;
+	double y;
+	double zoom;
 	int max_iter;
-}	t_fractal;
+}	t_frdata;
 
 typedef struct	s_app
 {
 	void		*mlx;
 	void		*win;
 	t_imgdata	*img;
-	t_fractal	*fract;
+	t_frdata	*fractal;
+	int counter;
 }	t_app;
 
 typedef unsigned int t_color;
