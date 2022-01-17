@@ -62,8 +62,8 @@ void	draw_fractal(t_imgdata *imgdata, t_frdata *frdata)
 			double lx = (double) (x - half_w) * frdata->zoom / imgdata->width - frdata->x;
 			double ly = (double) (y - half_h) * frdata->zoom * ASPECT_RATIO / imgdata->height - frdata->y;
 			t_color color = 0xFFFFFF;
-			// color = get_mandelbrot_pixel(frdata, lx, ly);
-			color = get_julia_pixel(frdata, lx, ly);
+			color = get_mandelbrot_pixel(frdata, lx, ly);
+			// color = get_julia_pixel(frdata, lx, ly);
 			img_put_pixel(imgdata, x, imgdata->height - y - 1, color);
 		}
 	}
@@ -85,6 +85,7 @@ void	update_window(t_app *app)
 	// 	free(zoom_str);
 	// }
 }
+
 int	mouse_hook(int keycode, int x, int y, t_app *app)
 {
 	printf("Mouse keycode %d, x: %d, y: %d\n", keycode, x, y);
@@ -117,8 +118,8 @@ void	set_default_fractal(t_frdata *f)
 	f->y = 0.0;
 	f->max_iter = MAX_ITER;
 
-	f->c_re = 0.41;
-	f->c_im = 0.25;
+	f->c_re = 0.4;
+	f->c_im = 0.15;
 }
 
 int	key_hook(int keycode, t_app *app)

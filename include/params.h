@@ -10,4 +10,8 @@
 
 #define MAX_ITER 100
 
+#define MANDEL 0
+#define JULIA 1
+#define SHIP 2
+
 #endif
