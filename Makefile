@@ -21,7 +21,7 @@ CFLAGS		:= -g -Wall -O3#-Werror -Wextra
 LDFLAGS		:= -L$(LIB_DIR)
 LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
 
-.PHONY:	all bonus clean fclean re wat
+.PHONY:	all bonus clean fclean re
 
 all: $(NAME)
 
@@ -34,12 +34,6 @@ $(LIBFT): $(LIB_DIR)
 $(LIBMLX): $(LIB_DIR)
 	$(MAKE) --directory=$(MLX_DIR)
 	cp $(MLX_DIR)/libmlx.a $(LIB_DIR)
-
-# The reason not to make libft.a build a separate rule is that if some file in
-# libft is changed, the rebuild of $(NAME) won't rebuild $(LIBFT) as it doesn't
-# Look at .c files, only at libft.a. The other option is to make $(LIBFT) phony
-# and for $(NAME) to depend on $(LIBFT), but then we'll have to repackage
-# $(NAME) every make, even if nothing has changed. Not good either.
 
 $(NAME): $(OBJ) $(LIBFT) $(LIBMLX)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(NAME)
