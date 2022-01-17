@@ -8,11 +8,7 @@
 #include <keycodes.h>
 #include <params.h>
 
-void	draw_fractal(t_app *app, t_imgdata *imgdata, t_frdata *frdata);
-
-// TODO use long double or double?
-// long double arithmetic is significantly slower
-t_color	get_mandelbrot_pixel(t_frdata *f, unsigned int *iter_accum, double c_re, double c_im)
+t_color	get_mandelbrot_pixel(t_frdata *f, double c_re, double c_im)
 {
 	int iter = 0;
 	double re = c_re;
@@ -27,28 +23,8 @@ t_color	get_mandelbrot_pixel(t_frdata *f, unsigned int *iter_accum, double c_re,
 		re = re * re - im * im + c_re;
 		im = 2.0 * re_prev * im + c_im;
 		iter++;
-		(*iter_accum)++;
 	}
 	return 0x000000;
-}
-
-void	update_window(t_app *app, int update_fractal)
-{
-	puts("called update_window");
-	mlx_do_sync(app->mlx);
-
-	// mlx_clear_window(app->mlx, app->win);
-	if (update_fractal)
-		draw_fractal(app, app->img, app->fractal);
-	mlx_put_image_to_window(app->mlx, app->win, app->img->img_ptr, 0, 0);
-	mlx_string_put(app->mlx, app->win, 50, 50, 0xEEEEEE, "fract-ol");
-	// mlx_string_put(app->mlx, app->win, 50, 80, 0xEEEEEE, "max_iter:");
-	// char *zoom_str = ft_itoa(app->fractal->max_iter);
-	// if (zoom_str)
-	// {
-	// 	mlx_string_put(app->mlx, app->win, 200, 80, 0xEEEEEE, zoom_str);
-	// 	free(zoom_str);
-	// }
 }
 
 //  0  1 2 3 4
@@ -57,11 +33,10 @@ void	update_window(t_app *app, int update_fractal)
 //  0  1 2 3 4 5
 // -2 -1 0 1 2
 
-void	draw_fractal(t_app *app, t_imgdata *imgdata, t_frdata *frdata)
+void	draw_fractal(t_imgdata *imgdata, t_frdata *frdata)
 {
 	int half_w = imgdata->width / 2;
 	int half_h = imgdata->height / 2;
-	unsigned int iter_accum = 0;
 
 	for (int y = 0; y < imgdata->height; ++y)
 	{
@@ -70,17 +45,28 @@ void	draw_fractal(t_app *app, t_imgdata *imgdata, t_frdata *frdata)
 			double lx = (double) (x - half_w) * frdata->zoom / imgdata->width - frdata->x;
 			double ly = (double) (y - half_h) * frdata->zoom * ASPECT_RATIO / imgdata->height - frdata->y;
 			t_color color = 0xFFFFFF;
-			color = get_mandelbrot_pixel(frdata, &iter_accum, lx, ly);
+			color = get_mandelbrot_pixel(frdata, lx, ly);
 			img_put_pixel(imgdata, x, imgdata->height - y - 1, color);
-			if (iter_accum > ITERS_PER_PASS)
-			{
-				update_window(app, 0);
-				iter_accum = 0;
-			}
 		}
 	}
 }
 
+void	update_window(t_app *app)
+{
+	// puts("called update_window()");
+
+	// mlx_clear_window(app->mlx, app->win);
+	draw_fractal(app->img, app->fractal);
+	mlx_put_image_to_window(app->mlx, app->win, app->img->img_ptr, 0, 0);
+	// mlx_string_put(app->mlx, app->win, 50, 50, 0xEEEEEE, "fract-ol");
+	// mlx_string_put(app->mlx, app->win, 50, 80, 0xEEEEEE, "max_iter:");
+	// char *zoom_str = ft_itoa(app->fractal->max_iter);
+	// if (zoom_str)
+	// {
+	// 	mlx_string_put(app->mlx, app->win, 200, 80, 0xEEEEEE, zoom_str);
+	// 	free(zoom_str);
+	// }
+}
 int	mouse_hook(int keycode, int x, int y, t_app *app)
 {
 	printf("Mouse keycode %d, x: %d, y: %d\n", keycode, x, y);
@@ -94,14 +80,14 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 		app->fractal->zoom *= 0.5;
 		app->fractal->x -= x_rel * app->fractal->zoom;
 		app->fractal->y -= y_rel * app->fractal->zoom;
-		update_window(app, 1);
+		update_window(app);
 	}
 	else if (keycode == WHEEL_DOWN)
 	{
 		app->fractal->x += x_rel * app->fractal->zoom;
 		app->fractal->y += y_rel * app->fractal->zoom;
 		app->fractal->zoom *= 2.0;
-		update_window(app, 1);
+		update_window(app);
 	}
 	return (0);
 }
@@ -129,7 +115,7 @@ int	key_hook(int keycode, t_app *app)
 		app->fractal->max_iter += 100;
 		printf("max_iter: %d\n", app->fractal->max_iter);
 	}
-	update_window(app, 1);
+	update_window(app);
 	return (0);
 }
 
@@ -163,7 +149,7 @@ int	main(void)
 	// mlx_hook();
 	mlx_set_font(mlx, win, "-bitstream-courier 10 pitch-bold-r-normal--0-0-120-120-m-0-iso8859-1");
 
-	update_window(&app, 1);
+	update_window(&app);
 
 	mlx_loop(mlx);
 
