@@ -8,6 +8,7 @@
 	"build_systems":
 	[
 		{
+			"working_dir": "$project_path",
 			"name": "Run fract-ol",
 			"shell_cmd": "make fract-ol && ./fract-ol mandelbrot"
 		}

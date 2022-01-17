@@ -8,6 +8,23 @@
 #include <keycodes.h>
 #include <params.h>
 
+t_color	get_julia_pixel(t_frdata *f, double re, double im)
+{
+	int iter = 0;
+	double re_prev = re;
+
+	while (iter < f->max_iter)
+	{
+		if (re * re + im * im > 4.0)
+			return (t_color) (0xFF * (f->max_iter - iter) / f->max_iter);
+		re_prev = re;
+		re = re * re - im * im + f->c_re;
+		im = 2.0 * re_prev * im + f->c_im;
+		iter++;
+	}
+	return 0x000000;
+}
+
 t_color	get_mandelbrot_pixel(t_frdata *f, double c_re, double c_im)
 {
 	int iter = 0;
@@ -45,7 +62,8 @@ void	draw_fractal(t_imgdata *imgdata, t_frdata *frdata)
 			double lx = (double) (x - half_w) * frdata->zoom / imgdata->width - frdata->x;
 			double ly = (double) (y - half_h) * frdata->zoom * ASPECT_RATIO / imgdata->height - frdata->y;
 			t_color color = 0xFFFFFF;
-			color = get_mandelbrot_pixel(frdata, lx, ly);
+			// color = get_mandelbrot_pixel(frdata, lx, ly);
+			color = get_julia_pixel(frdata, lx, ly);
 			img_put_pixel(imgdata, x, imgdata->height - y - 1, color);
 		}
 	}
@@ -95,9 +113,12 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 void	set_default_fractal(t_frdata *f)
 {
 	f->zoom = 4.0;
-	f->x = 0.5;
+	f->x = 0.0;
 	f->y = 0.0;
 	f->max_iter = MAX_ITER;
+
+	f->c_re = 0.41;
+	f->c_im = 0.25;
 }
 
 int	key_hook(int keycode, t_app *app)
@@ -124,8 +145,8 @@ int	key_hook(int keycode, t_app *app)
 
 int	main(int argc, char *argv[])
 {
-	void	*mlx;
-	void	*win;
+	void		*mlx;
+	void		*win;
 	t_imgdata	img;
 
 	mlx = mlx_init();

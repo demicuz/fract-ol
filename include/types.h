@@ -22,10 +22,14 @@ typedef struct	s_vars
 
 typedef struct	s_frdata
 {
-	double x;
-	double y;
-	double zoom;
-	int max_iter;
+	double	x;
+	double	y;
+	double	zoom;
+	int		max_iter;
+	int		type; // 0 - mandelbrot, 1 - julia, 2 - other?
+	// for julia fractal
+	double	c_re;
+	double	c_im;
 }	t_frdata;
 
 typedef struct	s_app
