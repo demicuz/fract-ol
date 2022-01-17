@@ -1,28 +1,39 @@
-NAME		= fract-ol
+NAME		:= fract-ol
+
+SRC_DIR		:= src
+OBJ_DIR		:= obj
+LIB_DIR		:= lib
+
+LIBFT_DIR	:= libft
+MLX_DIR		:= minilibx-linux
+
+LIBFT		:= $(LIB_DIR)/libft.a
+LIBMLX		:= $(LIB_DIR)/libmlx.a
+
+SRC_FILES	:= main.c mlx_utils.c
+SRC			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
+OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # TODO
-CC			= clang
-CFLAGS		= -g -Wall -O3#-Werror -Wextra
+CC			:= clang
+CPPFLAGS	:= -I include -MMD -MP
+CFLAGS		:= -g -Wall -O3#-Werror -Wextra
+LDFLAGS		:= -L$(LIB_DIR)
+LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
 
-LIBFT_DIR	= libft
-LIBFT		= $(LIBFT_DIR)/libft.a
+.PHONY:	all bonus clean fclean re wat
 
-MLX_DIR		= minilibx-linux
-MLX			= $(MLX_DIR)/libmlx.a
+all: $(NAME)
 
-SRC			= main.c mlx_utils.c
-OBJ			= $(SRC:.c=.o)
-# H			= $(SRC:.c=.h)
+bonus: $(NAME)
 
-# To include only the functions we need, not the whole libft.a
-# LIBFT_OBJ	= ft_putchar.o ft_strlen.o ft_strchr.o
+$(LIBFT): $(LIB_DIR)
+	$(MAKE) --directory=$(LIBFT_DIR)
+	cp $(LIBFT_DIR)/libft.a $(LIB_DIR)
 
-.PHONY:	all clean fclean re
-
-all : $(NAME)
-
-# $(LIBFT):
-# 	$(MAKE) --directory=$(LIBFT_DIR)
+$(LIBMLX): $(LIB_DIR)
+	$(MAKE) --directory=$(MLX_DIR)
+	cp $(MLX_DIR)/libmlx.a $(LIB_DIR)
 
 # The reason not to make libft.a build a separate rule is that if some file in
 # libft is changed, the rebuild of $(NAME) won't rebuild $(LIBFT) as it doesn't
@@ -30,23 +41,22 @@ all : $(NAME)
 # and for $(NAME) to depend on $(LIBFT), but then we'll have to repackage
 # $(NAME) every make, even if nothing has changed. Not good either.
 
-#TODO @$(MAKE) --directory=$(LIBFT_DIR) --silent
+$(NAME): $(OBJ) $(LIBFT) $(LIBMLX)
+	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(NAME)
 
-$(NAME): $(OBJ)
-	@$(CC) $(CFLAGS) $(OBJ) -L . -l:$(LIBFT) -l:$(MLX) -lXext -lX11 -lm -lz -o $(NAME)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# runner: $(OBJ) main.o
-# 	@$(CC) $(CFLAGS) $(OBJ) main.o -L . -l:$(LIBFT) -o runner
-
-%.o : %.c #$(H)
-	@$(CC) $(CFLAGS) -c $< -o $@ -I $(LIBFT_DIR) -I $(MLX_DIR) -I .
+$(OBJ_DIR) $(LIB_DIR):
+	mkdir -p $@
 
 clean:
-	rm -rf *.o
+	rm -rv $(OBJ_DIR)
 	$(MAKE) clean --directory=$(LIBFT_DIR)
+	$(MAKE) clean --directory=$(MLX_DIR)
 
 fclean: clean
-	rm -rf $(NAME)
+	rm $(NAME)
 	$(MAKE) fclean --directory=$(LIBFT_DIR)
 
 re: fclean all

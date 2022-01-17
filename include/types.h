@@ -34,7 +34,6 @@ typedef struct	s_app
 	void		*win;
 	t_imgdata	*img;
 	t_frdata	*fractal;
-	int counter;
 }	t_app;
 
 typedef unsigned int t_color;

@@ -8,7 +8,6 @@
 #define VIEW_H 900
 #define ASPECT_RATIO 900 / 1400
 
-#define MAX_ITER 200
-#define ITERS_PER_PASS 100000000
+#define MAX_ITER 100
 
 #endif

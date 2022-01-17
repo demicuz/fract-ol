@@ -92,18 +92,21 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 	return (0);
 }
 
+void	set_default_fractal(t_frdata *f)
+{
+	f->zoom = 4.0;
+	f->x = 0.5;
+	f->y = 0.0;
+	f->max_iter = MAX_ITER;
+}
+
 int	key_hook(int keycode, t_app *app)
 {
 	printf("Keyboard keycode: %d\n", keycode);
 	if (keycode == ESC)
 		exit(0);
 	if (keycode == R)
-	{
-		app->fractal->zoom = 4.0;
-		app->fractal->x = 0.5;
-		app->fractal->y = 0.0;
-		app->fractal->max_iter = 100;
-	}
+		set_default_fractal(app->fractal);
 	// TODO add bounds
 	else if (keycode == COMMA)
 	{
@@ -119,7 +122,7 @@ int	key_hook(int keycode, t_app *app)
 	return (0);
 }
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
 	void	*mlx;
 	void	*win;
@@ -133,10 +136,7 @@ int	main(void)
 	img.height = VIEW_H;
 
 	t_frdata fractal;
-	fractal.max_iter = MAX_ITER;
-	fractal.x = 0.05;
-	fractal.y = -0.6805;
-	fractal.zoom = 2.0;
+	set_default_fractal(&fractal);
 
 	t_app app;
 	app.mlx = mlx;
@@ -145,8 +145,7 @@ int	main(void)
 	app.fractal = &fractal;
 	mlx_mouse_hook(win, mouse_hook, &app);
 	mlx_key_hook(win, key_hook, &app);
-	// mlx_loop_hook();
-	// mlx_hook();
+
 	mlx_set_font(mlx, win, "-bitstream-courier 10 pitch-bold-r-normal--0-0-120-120-m-0-iso8859-1");
 
 	update_window(&app);
