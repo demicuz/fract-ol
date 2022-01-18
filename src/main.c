@@ -7,34 +7,34 @@
 #include <utils.h>
 #include <params.h>
 
-t_color	get_julia_pixel(t_frdata *f, double re, double im)
+t_color	get_julia_pixel(t_frdata *fr, double re, double im)
 {
 	int iter = 0;
 	double re_prev = re;
 
-	while (iter < f->max_iter)
+	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 4.0)
-			return (t_color) (0xFF * (f->max_iter - iter) / f->max_iter);
+			return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
 		re_prev = re;
-		re = re * re - im * im + f->c_re;
-		im = 2.0 * re_prev * im + f->c_im;
+		re = re * re - im * im + fr->c_re;
+		im = 2.0 * re_prev * im + fr->c_im;
 		iter++;
 	}
 	return 0x000000;
 }
 
-t_color	get_mandelbrot_pixel(t_frdata *f, double c_re, double c_im)
+t_color	get_mandelbrot_pixel(t_frdata *fr, double c_re, double c_im)
 {
 	int iter = 0;
 	double re = c_re;
 	double im = c_im;
 	double re_prev = c_re;
 
-	while (iter < f->max_iter)
+	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 4.0)
-			return (t_color) (0xFF * (f->max_iter - iter) / f->max_iter);
+			return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
 		re_prev = re;
 		re = re * re - im * im + c_re;
 		im = 2.0 * re_prev * im + c_im;
@@ -140,29 +140,29 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 	return (0);
 }
 
-void	set_default_fractal(t_frdata *f)
+void	set_default_fractal(t_frdata *fr)
 {
-	f->zoom = 4.0;
-	f->x = 0.0;
-	f->y = 0.0;
-	f->max_iter = MAX_ITER;
+	fr->zoom = 4.0;
+	fr->x = 0.0;
+	fr->y = 0.0;
+	fr->max_iter = MAX_ITER;
 
-	f->c_re = 0.4;
-	f->c_im = 0.15;
+	fr->c_re = 0.4;
+	fr->c_im = 0.15;
 }
 
-void	change_max_iter(t_frdata *f, int direction)
+void	change_max_iter(t_frdata *fr, int direction)
 {
 	int delta;
 
 	delta = direction * MAX_ITER_DELTA;
-	if (f->max_iter + delta <= 0)
+	if (fr->max_iter + delta <= 0)
 	{
 		printf("max_iter can't be zero or less!\n");
 		return ;
 	}
-	f->max_iter += delta;
-	printf("max_iter: %d\n", f->max_iter);
+	fr->max_iter += delta;
+	printf("max_iter: %d\n", fr->max_iter);
 }
 
 int	key_hook(int keycode, t_app *app)
