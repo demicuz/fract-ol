@@ -148,6 +148,20 @@ void	set_default_fractal(t_frdata *f)
 	f->c_im = 0.15;
 }
 
+void	change_max_iter(t_frdata *f, int direction)
+{
+	int delta;
+
+	delta = direction * ITER_CHANGE_STEP;
+	if (f->max_iter + delta <= 0)
+	{
+		printf("max_iter can't be zero or less!\n");
+		return ;
+	}
+	f->max_iter += delta;
+	printf("max_iter: %d\n", f->max_iter);
+}
+
 int	key_hook(int keycode, t_app *app)
 {
 	printf("Keyboard keycode: %d\n", keycode);
@@ -157,15 +171,9 @@ int	key_hook(int keycode, t_app *app)
 		set_default_fractal(app->fractal);
 	// TODO add bounds
 	else if (keycode == COMMA)
-	{
-		app->fractal->max_iter -= 100;
-		printf("max_iter: %d\n", app->fractal->max_iter);
-	}
+		change_max_iter(app->fractal, -1);
 	else if (keycode == DOT)
-	{
-		app->fractal->max_iter += 100;
-		printf("max_iter: %d\n", app->fractal->max_iter);
-	}
+		change_max_iter(app->fractal, 1);
 	update_window(app);
 	return (0);
 }

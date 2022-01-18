@@ -55,3 +55,5 @@ fclean: clean
 	$(MAKE) fclean --directory=$(LIBFT_DIR)
 
 re: fclean all
+
+-include $(OBJ:.o=.d)
