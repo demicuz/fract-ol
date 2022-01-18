@@ -6,7 +6,7 @@
 
 #define VIEW_W 1400
 #define VIEW_H 900
-#define ASPECT_RATIO 900 / 1400
+#define ASPECT (1400.0 / 900.0)
 
 #define MAX_ITER 100
 

@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 # define TYPES_H
 
+#include <params.h>
+
 typedef struct s_imgdata
 {
 	void	*img_ptr;  // *t_img

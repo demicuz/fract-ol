@@ -50,21 +50,21 @@ t_color	get_mandelbrot_pixel(t_frdata *f, double c_re, double c_im)
 //  0  1 2 3 4 5
 // -2 -1 0 1 2
 
-void	draw_fractal(t_imgdata *imgdata, t_frdata *frdata)
+void	draw_fractal(t_imgdata *im, t_frdata *fr)
 {
-	int half_w = imgdata->width / 2;
-	int half_h = imgdata->height / 2;
+	int hw = im->width / 2;
+	int hh = im->height / 2;
 
-	for (int y = 0; y < imgdata->height; ++y)
+	for (int y = 0; y < im->height; ++y)
 	{
-		for (int x = 0; x < imgdata->width; ++x)
+		for (int x = 0; x < im->width; ++x)
 		{
-			double lx = (double) (x - half_w) * frdata->zoom / imgdata->width - frdata->x;
-			double ly = (double) (y - half_h) * frdata->zoom * ASPECT_RATIO / imgdata->height - frdata->y;
+			double lx = (double) (x - hw) * fr->zoom * ASPECT / im->width - fr->x;
+			double ly = (double) (y - hh) * fr->zoom / im->height - fr->y;
 			t_color color = 0xFFFFFF;
-			color = get_mandelbrot_pixel(frdata, lx, ly);
-			// color = get_julia_pixel(frdata, lx, ly);
-			img_put_pixel(imgdata, x, imgdata->height - y - 1, color);
+			color = get_mandelbrot_pixel(fr, lx, ly);
+			// color = get_julia_pixel(fr, lx, ly);
+			img_put_pixel(im, x, im->height - y - 1, color);
 		}
 	}
 }
@@ -86,28 +86,54 @@ void	update_window(t_app *app)
 	// }
 }
 
+void	zoom_in(int x, int y, t_app *app)
+{
+	int w;
+	int h;
+	double x_rel;
+	double y_rel;
+
+	w =  app->img->width;
+	h =  app->img->height;
+
+	x_rel = ((double) - w / 2 + x) * ASPECT / w;
+	y_rel = ((double) h / 2 - y) / h;
+
+	app->fractal->zoom *= 0.5;
+	app->fractal->x -= x_rel * app->fractal->zoom;
+	app->fractal->y -= y_rel * app->fractal->zoom;
+	update_window(app);
+}
+
+void	zoom_out(int x, int y, t_app *app)
+{
+	int w;
+	int h;
+	double x_rel;
+	double y_rel;
+
+	w =  app->img->width;
+	h =  app->img->height;
+
+	x_rel = ((double) - w / 2 + x) * ASPECT / w;
+	y_rel = ((double) h / 2 - y) / h;
+
+	app->fractal->x += x_rel * app->fractal->zoom;
+	app->fractal->y += y_rel * app->fractal->zoom;
+	app->fractal->zoom *= 2.0;
+	update_window(app);
+}
+
 int	mouse_hook(int keycode, int x, int y, t_app *app)
 {
 	printf("Mouse keycode %d, x: %d, y: %d\n", keycode, x, y);
 
-	double x_rel = ((double) - app->img->width / 2 + x) / app->img->width;
-	double y_rel = ((double) app->img->height / 2 - y) * ASPECT_RATIO / app->img->height;
-	printf("relative, x: %lf, y: %lf\n", x_rel, y_rel);
-
 	if (keycode == WHEEL_UP)
-	{
-		app->fractal->zoom *= 0.5;
-		app->fractal->x -= x_rel * app->fractal->zoom;
-		app->fractal->y -= y_rel * app->fractal->zoom;
-		update_window(app);
-	}
+		zoom_in(x, y, app);
 	else if (keycode == WHEEL_DOWN)
-	{
-		app->fractal->x += x_rel * app->fractal->zoom;
-		app->fractal->y += y_rel * app->fractal->zoom;
-		app->fractal->zoom *= 2.0;
-		update_window(app);
-	}
+		zoom_out(x, y, app);
+	// else if (keycode == LEFT_CLICK)
+
 	return (0);
 }
 

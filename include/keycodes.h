@@ -6,6 +6,7 @@
 #define COMMA 44
 #define DOT 46
 
+#define LEFT_CLICK 1
 #define WHEEL_UP 4
 #define WHEEL_DOWN 5
 
