@@ -28,7 +28,8 @@ typedef struct	s_frdata
 	double	y;
 	double	zoom;
 	int		max_iter;
-	int		type; // 0 - mandelbrot, 1 - julia, 2 - other?
+	int		fr_type; // 0 - mandelbrot, 1 - julia, 2 - other?
+	int		color_type; // 0 - usual, 1 - orbit traps, 2 - on acid
 	// for julia fractal
 	double	c_re;
 	double	c_im;
@@ -43,5 +44,6 @@ typedef struct	s_app
 }	t_app;
 
 typedef unsigned int t_color;
+typedef t_color (*t_pixel_func)(t_frdata *fr, double re, double im);
 
 #endif 

@@ -15,4 +15,8 @@
 #define JULIA 1
 #define SHIP 2
 
+#define COLOR_TYPES 2
+#define PLAIN 0
+#define ORBIT 1
+
 #endif

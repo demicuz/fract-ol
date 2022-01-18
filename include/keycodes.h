@@ -1,6 +1,7 @@
 #ifndef KEYCODES_H
 # define KEYCODES_H
 
+#define C 99
 #define R 114
 #define ESC 65307
 #define COMMA 44
