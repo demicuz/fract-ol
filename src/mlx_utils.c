@@ -16,7 +16,7 @@ unsigned int	rgb_to_int(unsigned char r, unsigned char g, unsigned char b)
 
 void	img_put_pixel(t_imgdata *data, int x, int y, unsigned int color)
 {
-	// TODO hardcoded 4 bits per pixel
+	// TODO hardcoded 32 bits per pixel
 	unsigned int	*dst;
 	dst = (unsigned int *)data->addr + (y * data->width + x);
 	*dst = color;

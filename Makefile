@@ -10,7 +10,7 @@ MLX_DIR		:= minilibx-linux
 LIBFT		:= $(LIB_DIR)/libft.a
 LIBMLX		:= $(LIB_DIR)/libmlx.a
 
-SRC_FILES	:= main.c mlx_utils.c
+SRC_FILES	:= main.c mlx_utils.c float_parser.c
 SRC			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 

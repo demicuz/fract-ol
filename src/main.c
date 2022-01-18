@@ -1,11 +1,10 @@
 #include <stdio.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <math.h>
 #include <libft.h>
 #include <mlx.h>
 
-#include <mlx_utils.h>
-#include <keycodes.h>
+#include <utils.h>
 #include <params.h>
 
 t_color	get_julia_pixel(t_frdata *f, double re, double im)
@@ -52,18 +51,22 @@ t_color	get_mandelbrot_pixel(t_frdata *f, double c_re, double c_im)
 
 void	draw_fractal(t_imgdata *im, t_frdata *fr)
 {
-	int hw = im->width / 2;
-	int hh = im->height / 2;
+	double 	lx;
+	double 	ly;
+	t_color	color;
 
 	for (int y = 0; y < im->height; ++y)
 	{
 		for (int x = 0; x < im->width; ++x)
 		{
-			double lx = (double) (x - hw) * fr->zoom * ASPECT / im->width - fr->x;
-			double ly = (double) (y - hh) * fr->zoom / im->height - fr->y;
-			t_color color = 0xFFFFFF;
-			color = get_mandelbrot_pixel(fr, lx, ly);
-			// color = get_julia_pixel(fr, lx, ly);
+			lx = (x - (double) im->width / 2) * fr->zoom * ASPECT / im->width - fr->x;
+			ly = (y - (double) im->height / 2) * fr->zoom / im->height - fr->y;
+			if (fr->type == MANDEL)
+				color = get_mandelbrot_pixel(fr, lx, ly);
+			else if (fr->type == JULIA)
+				color = get_julia_pixel(fr, lx, ly);
+			else
+				color = 0xFF0000;
 			img_put_pixel(im, x, im->height - y - 1, color);
 		}
 	}
@@ -152,7 +155,7 @@ void	change_max_iter(t_frdata *f, int direction)
 {
 	int delta;
 
-	delta = direction * ITER_CHANGE_STEP;
+	delta = direction * MAX_ITER_DELTA;
 	if (f->max_iter + delta <= 0)
 	{
 		printf("max_iter can't be zero or less!\n");
@@ -192,6 +195,7 @@ int	main(int argc, char *argv[])
 	img.height = VIEW_H;
 
 	t_frdata fractal;
+	fractal.type = MANDEL;
 	set_default_fractal(&fractal);
 
 	t_app app;

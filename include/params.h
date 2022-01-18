@@ -9,7 +9,7 @@
 #define ASPECT (1400.0 / 900.0)
 
 #define MAX_ITER 100
-#define ITER_CHANGE_STEP 50
+#define MAX_ITER_DELTA 100
 
 #define MANDEL 0
 #define JULIA 1
