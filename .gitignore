@@ -1,5 +1,6 @@
 .cache/
 *.json
+*.d
 fract-ol
 *.sublime-workspace
 *.o
