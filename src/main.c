@@ -35,38 +35,44 @@ t_color	get_julia_pixel_orbit(t_frdata *fr, double re, double im)
 	{
 		if (re * re + im * im > 4.0)
 			return 0xFFFFFF;
-			// return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
+		// return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
 		re_prev = re;
 		re = re * re - im * im + fr->c_re;
 		im = 2.0 * re_prev * im + fr->c_im;
-		if (f > re*re + im*im)
-			f = re*re + im*im;
+		if (f > re * re + im * im)
+			f = re * re + im * im;
 		iter++;
 	}
 	f = 1.0 + log2(f) / 16.0;
-	float r = f;	
-	float g = f*f;	
-	float b = f*f*f;
-	return rgb_to_int(r*255, g*255, b*255);
+	float r = f;
+	float g = f * f;
+	float b = f * f * f;
+	return rgb_to_int(r * 255, g * 255, b * 255);
 }
 
 t_color	get_mandelbrot_pixel(t_frdata *fr, double c_re, double c_im)
 {
-	int iter = 0;
-	double re = c_re;
-	double im = c_im;
-	double re_prev = c_re;
+	int		iter;
+	double	re;
+	double	im;
+	double	re_prev;
+	double	r;
 
+	iter = 0;
+	re = c_re;
+	im = c_im;
+	re_prev = c_re;
 	while (iter < fr->max_iter)
 	{
-		if (re * re + im * im > 4.0)
-			return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
+		if (re * re + im * im > 10.0)
+			break ;
+		// return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
 		re_prev = re;
 		re = re * re - im * im + c_re;
 		im = 2.0 * re_prev * im + c_im;
 		iter++;
 	}
-	return 0x000000;
+	return (0xFF * (fr->max_iter - iter) / fr->max_iter);
 }
 
 t_color	get_mandelbrot_pixel_orbit(t_frdata *fr, double c_re, double c_im)
@@ -80,20 +86,48 @@ t_color	get_mandelbrot_pixel_orbit(t_frdata *fr, double c_re, double c_im)
 	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 4.0)
+			// break;
 			return 0xFFFFFF;
 		re_prev = re;
 		re = re * re - im * im + c_re;
 		im = 2.0 * re_prev * im + c_im;
-		if (f > re*re + im*im)
-			f = re*re + im*im;
+		if (f > re * re + im * im)
+			f = re * re + im * im;
 		iter++;
 	}
 	f = 1.0 + log2(f) / 16.0;
-	float r = f;	
-	float g = f*f;	
-	float b = f*f*f;
-	return rgb_to_int(r*255, g*255, b*255);
+	return rgb_to_int(f * 255, f * f * 255, f * f * f * 255);
 }
+
+t_color	get_mandelbrot_pixel_acid(t_frdata *fr, double c_re, double c_im)
+{
+	int		iter;
+	double	re;
+	double	im;
+	double	re_prev;
+	double	r;
+
+	iter = 0;
+	re = c_re;
+	im = c_im;
+	re_prev = c_re;
+	while (iter < fr->max_iter)
+	{
+		if (re * re + im * im > 10.0)
+			break ;
+		re_prev = re;
+		re = re * re - im * im + c_re;
+		im = 2.0 * re_prev * im + c_im;
+		iter++;
+	}
+	r = log2(log2((re * re + im * im) / 2.0));
+	return (rgb_to_int(r * 255.0, r * r * 255.0, r * r * r * 255.0));
+}
+
+// t_color get_ship_pixel(t_frdata *fr, double re, double im)
+// {
+
+// }
 
 t_pixel_func	get_pixel_func(t_frdata *fr)
 {
@@ -105,6 +139,8 @@ t_pixel_func	get_pixel_func(t_frdata *fr)
 		return (get_mandelbrot_pixel_orbit);
 	else if (fr->fr_type == JULIA && fr->color_type == ORBIT)
 		return (get_julia_pixel_orbit);
+	else if (fr->fr_type == MANDEL && fr->color_type == ACID)
+		return (get_mandelbrot_pixel_acid);
 	else
 		return (get_mandelbrot_pixel);
 }
