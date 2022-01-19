@@ -163,10 +163,8 @@ t_color get_ship_pixel(t_frdata *fr, double c_re, double c_im)
 			else
 				return (rgb_to_int(0, q * 255.0, 0));
 		}
-		if (re < 0.0)
-			re = -re;
-		if (im < 0.0)
-			im = -im;
+		re = fabs(re);
+		im = fabs(im);
 		square_plus_c(&re, &im, c_re, c_im);
 		iter++;
 	}
@@ -193,12 +191,12 @@ t_pixel_func	get_pixel_func(t_frdata *fr)
 		return (get_mandelbrot_pixel_plain);
 }
 
+// Hello off-by-one error, my old friend
 //  0  1 2 3 4
 // -2 -1 0 1 2
-
+//
 //  0  1 2 3 4 5
 // -2 -1 0 1 2
-
 void	draw_fractal(t_imgdata *im, t_frdata *fr)
 {
 	double 	lx;
@@ -336,6 +334,12 @@ void	change_color(t_frdata *fr)
 	fr->color_type = (fr->color_type + 1) % COLOR_TYPES;
 }
 
+void	move_view(t_frdata *fr, int dx, int dy)
+{
+	fr->x -= dx * fr->zoom * 0.1;
+	fr->y -= dy * fr->zoom * 0.1;
+}
+
 int	key_hook(int keycode, t_app *app)
 {
 	printf("Keyboard keycode: %d\n", keycode);
@@ -349,8 +353,35 @@ int	key_hook(int keycode, t_app *app)
 		change_max_iter(app->fractal, -1);
 	else if (keycode == DOT)
 		change_max_iter(app->fractal, 1);
+	else if (keycode == UP)
+		move_view(app->fractal, 0, 1);
+	else if (keycode == DOWN)
+		move_view(app->fractal, 0, -1);
+	else if (keycode == LEFT)
+		move_view(app->fractal, -1, 0);
+	else if (keycode == RIGHT)
+		move_view(app->fractal, 1, 0);
 	update_window(app);
 	return (0);
+}
+
+int	init_app(int argc, char *argv[], t_app *a)
+{
+	a->img->img_ptr = mlx_new_image(a->mlx, VIEW_W, VIEW_H);
+	a->img->addr = mlx_get_data_addr(a->img->img_ptr, &a->img->bpp,\
+		&a->img->line_len, &a->img->endian);
+	a->img->width = VIEW_W;
+	a->img->height = VIEW_H;
+
+	a->fractal->fr_type = MANDEL;
+	a->fractal->color_type = 0;
+	set_default_params(a->fractal);
+
+	mlx_mouse_hook(a->win, mouse_hook, a);
+	mlx_key_hook(a->win, key_hook, a);
+
+	update_window(a);
+	return (1);
 }
 
 int	main(int argc, char *argv[])
@@ -358,32 +389,17 @@ int	main(int argc, char *argv[])
 	void		*mlx;
 	void		*win;
 	t_imgdata	img;
+	t_frdata	fractal;
+	t_app app;
 
 	mlx = mlx_init();
 	win = mlx_new_window(mlx, W, H, "fract-ol");
-	img.img_ptr = mlx_new_image(mlx, VIEW_W, VIEW_H);
-	img.addr = mlx_get_data_addr(img.img_ptr, &img.bits_per_pixel, &img.line_length, &img.endian);
-	img.width = VIEW_W;
-	img.height = VIEW_H;
 
-	t_frdata fractal;
-	fractal.fr_type = MANDEL;
-	fractal.color_type = 0;
-	set_default_params(&fractal);
-
-	t_app app;
 	app.mlx = mlx;
 	app.win = win;
 	app.img = &img;
 	app.fractal = &fractal;
-	mlx_mouse_hook(win, mouse_hook, &app);
-	mlx_key_hook(win, key_hook, &app);
-
-	mlx_set_font(mlx, win, "-bitstream-courier 10 pitch-bold-r-normal--0-0-120-120-m-0-iso8859-1");
-
-	update_window(&app);
-
-	mlx_loop(mlx);
-
+	if (init_app(argc, argv, &app))
+		mlx_loop(mlx);
 	return (0);
 }

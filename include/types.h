@@ -7,8 +7,8 @@ typedef struct s_imgdata
 {
 	void	*img_ptr;  // *t_img
 	char	*addr; // t_img->data
-	int		bits_per_pixel;
-	int		line_length;
+	int		bpp;
+	int		line_len;
 	int		endian;
 
 	int	width;
