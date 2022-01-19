@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: psharen <psharen@student.21-school.ru>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2000/01/01 20:20:20 by psharen           #+#    #+#             */
+/*   Updated: 2000/01/01 20:20:20 by psharen          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TYPES_H
 # define TYPES_H
 
-#include <params.h>
+# include <params.h>
 
 typedef struct s_imgdata
 {
@@ -10,7 +22,6 @@ typedef struct s_imgdata
 	int		bpp;
 	int		line_len;
 	int		endian;
-
 	int	width;
 	int	height;
 }	t_imgdata;

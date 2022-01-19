@@ -10,12 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MLX_UTILS_H
-# define MLX_UTILS_H
+#include <stdlib.h>
 
-#include <types.h>
-
-void			img_put_pixel(t_imgdata *data, int x, int y, unsigned int color);
-unsigned int	rgb_to_int(double r, double g, double b);
-
-#endif
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	while (*s1 && (*s1 == *s2))
+	{
+		s1++;
+		s2++;
+	}
+	return ((unsigned char) *s1 - (unsigned char) *s2);
+}

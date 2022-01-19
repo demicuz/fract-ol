@@ -365,15 +365,14 @@ int	key_hook(int keycode, t_app *app)
 	return (0);
 }
 
-int	init_app(int argc, char *argv[], t_app *a)
+int	init_app(t_app *a)
 {
 	a->img->img_ptr = mlx_new_image(a->mlx, VIEW_W, VIEW_H);
-	a->img->addr = mlx_get_data_addr(a->img->img_ptr, &a->img->bpp,\
-		&a->img->line_len, &a->img->endian);
+	a->img->addr = mlx_get_data_addr(a->img->img_ptr, &a->img->bpp, \
+	                                 &a->img->line_len, &a->img->endian);
 	a->img->width = VIEW_W;
 	a->img->height = VIEW_H;
 
-	a->fractal->fr_type = MANDEL;
 	a->fractal->color_type = 0;
 	set_default_params(a->fractal);
 
@@ -384,22 +383,44 @@ int	init_app(int argc, char *argv[], t_app *a)
 	return (1);
 }
 
+int	parse_arguments(int argc, char *argv[], t_frdata *fr)
+{
+	if (argc == 1)
+		return (0);
+	if (ft_strcmp(argv[1], "mandelbrot") == 0)
+		fr->fr_type = MANDEL;
+	else if (ft_strcmp(argv[1], "julia") == 0)
+		fr->fr_type = JULIA;
+	else if (ft_strcmp(argv[1], "ship") == 0)
+		fr->fr_type = SHIP;
+	else
+		return (0);
+	// TODO
+	// if (argc == 3 && fr->fr_type == JULIA)
+
+	return (1);
+}
+
 int	main(int argc, char *argv[])
 {
 	void		*mlx;
 	void		*win;
 	t_imgdata	img;
 	t_frdata	fractal;
-	t_app app;
+	t_app		app;
 
+	if (!parse_arguments(argc, argv, &fractal))
+	{
+		printf(HELP_MESSAGE);
+		exit(-1);
+	}
 	mlx = mlx_init();
 	win = mlx_new_window(mlx, W, H, "fract-ol");
-
-	app.mlx = mlx;
-	app.win = win;
 	app.img = &img;
 	app.fractal = &fractal;
-	if (init_app(argc, argv, &app))
+	app.mlx = mlx;
+	app.win = win;
+	if (init_app(&app))
 		mlx_loop(mlx);
 	return (0);
 }

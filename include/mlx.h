@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: psharen <psharen@student.21-school.ru>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2000/01/01 20:20:20 by psharen           #+#    #+#             */
+/*   Updated: 2000/01/01 20:20:20 by psharen          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /*
 ** mlx.h for MinilibX in 
 ** 
@@ -7,42 +19,19 @@
 ** Started on  Mon Jul 31 16:37:50 2000 Charlie Root
 ** Last update Tue May 15 16:23:28 2007 Olivier Crouzet
 */
-
-/*
-**   MinilibX -  Please report bugs
-*/
-
-
-/*
-** FR msg - FR msg - FR msg
-**
-** La MinilibX utilise 2 librairies supplementaires qu'il
-**      est necessaire de rajouter a la compilation :
-**   -lmlx -lXext -lX11
-**
-** La MinilibX permet le chargement des images de type Xpm.
-** Notez que cette implementation est incomplete.
-** Merci de communiquer tout probleme de chargement d'image
-** de ce type.
-*/
-
-
 #ifndef MLX_H
 
-#define	MLX_H
+# define	MLX_H
 
-
-void	*mlx_init();
 /*
 **  needed before everything else.
 **  return (void *)0 if failed
 */
-
+void	*mlx_init();
 
 /*
 ** Basic actions
 */
-
 void	*mlx_new_window(void *mlx_ptr, int size_x, int size_y, char *title);
 /*
 **  return void *0 if failed
@@ -80,14 +69,13 @@ int	mlx_get_color_value(void *mlx_ptr, int color);
 /*
 ** dealing with Events
 */
-
 int	mlx_mouse_hook (void *win_ptr, int (*funct_ptr)(), void *param);
 int	mlx_key_hook (void *win_ptr, int (*funct_ptr)(), void *param);
 int	mlx_expose_hook (void *win_ptr, int (*funct_ptr)(), void *param);
 
 int	mlx_loop_hook (void *mlx_ptr, int (*funct_ptr)(), void *param);
 int	mlx_loop (void *mlx_ptr);
-int mlx_loop_end (void *mlx_ptr);
+int	mlx_loop_end (void *mlx_ptr);
 
 /*
 **  hook funct are called as follow :
