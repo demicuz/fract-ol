@@ -28,6 +28,17 @@
 
 # define COLOR_TYPES 3
 
-# define HELP_MESSAGE "ima help message"
+# define HELP_MESSAGE "\
+Usage: ./fract-ol [mandelbrot | julia | ship]\n\
+\n\
+You can also pass real and imaginary parts of 'c' constant for Julia fractal:\n\
+       ./fract-ol julia 0.4 0.35\n\
+They have to be floating point numbers between -10.0 and 10.0 (not inclusive)\n\
+\n\
+Controls:\n\
+. (dot) and , (comma) to change zoom\n\
+C to change color\n\
+R to reset fractal parameters\n\
+Arrows to navigate\n"
 
 #endif

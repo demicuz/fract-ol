@@ -1,4 +1,5 @@
 .cache/
+obj/
 *.json
 *.d
 fract-ol
