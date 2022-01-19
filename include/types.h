@@ -15,13 +15,6 @@ typedef struct s_imgdata
 	int	height;
 }	t_imgdata;
 
-typedef struct	s_vars
-{
-	void		*mlx;
-	void		*win;
-	t_imgdata	*img;
-}	t_vars;
-
 typedef struct	s_frdata
 {
 	double	x;

@@ -16,8 +16,5 @@
 #define SHIP 2
 
 #define COLOR_TYPES 3
-#define PLAIN 0
-#define MODULO 1
-#define SMOOTH 2
 
 #endif

@@ -8,18 +8,26 @@
 #include <utils.h>
 #include <params.h>
 
+// For some reason can't pass by reference. Here we are with *re * *re madness
+void	square_plus_c(double *re, double *im, double c_re, double c_im)
+{
+	double re_prev;
+
+	re_prev = *re;
+	*re = *re * *re - *im * *im + c_re;
+	*im = 2.0 * re_prev * *im + c_im;
+}
+
 t_color	get_julia_pixel_plain(t_frdata *fr, double re, double im)
 {
-	int iter = 0;
-	double re_prev = re;
+	int iter;
 
+	iter = 0;
 	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 4.0)
 			return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
-		re_prev = re;
-		re = re * re - im * im + fr->c_re;
-		im = 2.0 * re_prev * im + fr->c_im;
+		square_plus_c(&re, &im, fr->c_re, fr->c_im);
 		iter++;
 	}
 	return 0x000000;
@@ -28,7 +36,6 @@ t_color	get_julia_pixel_plain(t_frdata *fr, double re, double im)
 t_color	get_julia_pixel_orbit(t_frdata *fr, double re, double im)
 {
 	int iter = 0;
-	double	re_prev = re;
 	double	f = 1e20;
 
 	while (iter < fr->max_iter)
@@ -36,9 +43,7 @@ t_color	get_julia_pixel_orbit(t_frdata *fr, double re, double im)
 		if (re * re + im * im > 4.0)
 			return 0xFFFFFF;
 		// return (t_color) (0xFF * (fr->max_iter - iter) / fr->max_iter);
-		re_prev = re;
-		re = re * re - im * im + fr->c_re;
-		im = 2.0 * re_prev * im + fr->c_im;
+		square_plus_c(&re, &im, fr->c_re, fr->c_im);
 		if (f > re * re + im * im)
 			f = re * re + im * im;
 		iter++;
@@ -50,17 +55,34 @@ t_color	get_julia_pixel_orbit(t_frdata *fr, double re, double im)
 	return rgb_to_int(r * 255, g * 255, b * 255);
 }
 
+t_color	get_julia_pixel_smooth(t_frdata *fr, double re, double im)
+{
+	int		iter;
+	double	r;
+
+	iter = 0;
+	while (iter < fr->max_iter && re * re + im * im < 40.0)
+	{
+		square_plus_c(&re, &im, fr->c_re, fr->c_im);
+		iter++;
+	}
+	if (iter > fr->max_iter - 1)
+		return 0xFFFFFF;
+	r = (re * re + im * im);
+	r = iter - log2(log2(r / 2.0)) + 4.0;
+	r /= fr->max_iter;
+	return (rgb_to_int(r * 255.0, r * r * 255.0, r * r * r * 255.0));
+}
+
 t_color	get_mandelbrot_pixel_plain(t_frdata *fr, double c_re, double c_im)
 {
 	int		iter;
 	double	re;
 	double	im;
-	double	re_prev;
 
 	iter = 0;
 	re = c_re;
 	im = c_im;
-	re_prev = c_re;
 	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 20.0)
@@ -71,9 +93,7 @@ t_color	get_mandelbrot_pixel_plain(t_frdata *fr, double c_re, double c_im)
 			else
 				return (rgb_to_int(0, q * 255.0, 0));
 		}
-		re_prev = re;
-		re = re * re - im * im + c_re;
-		im = 2.0 * re_prev * im + c_im;
+		square_plus_c(&re, &im, c_re, c_im);
 		iter++;
 	}
 	return 0x000000;
@@ -84,16 +104,13 @@ t_color	get_mandelbrot_pixel_modulo(t_frdata *fr, double c_re, double c_im)
 	int		iter = 0;
 	double	re = c_re;
 	double	im = c_im;
-	double	re_prev = c_re;
 
 	while (iter < fr->max_iter)
 	{
 		if (re * re + im * im > 40.0)
 			break;
-			// return 0xFFFFFF;
-		re_prev = re;
-		re = re * re - im * im + c_re;
-		im = 2.0 * re_prev * im + c_im;
+		// return 0xFFFFFF;
+		square_plus_c(&re, &im, c_re, c_im);
 		iter++;
 	}
 	iter %= 20;
@@ -108,20 +125,14 @@ t_color	get_mandelbrot_pixel_smooth(t_frdata *fr, double c_re, double c_im)
 	int		iter;
 	double	re;
 	double	im;
-	double	re_prev;
 	double	r;
 
 	iter = 0;
 	re = c_re;
 	im = c_im;
-	re_prev = c_re;
-	while (iter < fr->max_iter)
+	while (iter < fr->max_iter && re * re + im * im < 40.0)
 	{
-		if (re * re + im * im > 40.0)
-			break ;
-		re_prev = re;
-		re = re * re - im * im + c_re;
-		im = 2.0 * re_prev * im + c_im;
+		square_plus_c(&re, &im, c_re, c_im);
 		iter++;
 	}
 	if (iter > fr->max_iter - 1)
@@ -132,23 +143,52 @@ t_color	get_mandelbrot_pixel_smooth(t_frdata *fr, double c_re, double c_im)
 	return (rgb_to_int(r * 255.0, r * r * 255.0, r * r * r * 255.0));
 }
 
-// t_color get_ship_pixel(t_frdata *fr, double re, double im)
-// {
+t_color get_ship_pixel(t_frdata *fr, double c_re, double c_im)
+{
+	int		iter;
+	double	re;
+	double	im;
 
-// }
+	iter = 0;
+	re = c_re;
+	im = -c_im;
+	c_im = -c_im;
+	while (iter < fr->max_iter)
+	{
+		if (re * re + im * im > 20.0)
+		{
+			double q = (double) iter / fr->max_iter;
+			if (q > 0.5)
+				return (rgb_to_int(q * 255.0, 255, q * 255.0));
+			else
+				return (rgb_to_int(0, q * 255.0, 0));
+		}
+		if (re < 0.0)
+			re = -re;
+		if (im < 0.0)
+			im = -im;
+		square_plus_c(&re, &im, c_re, c_im);
+		iter++;
+	}
+	return 0x000000;
+}
 
 t_pixel_func	get_pixel_func(t_frdata *fr)
 {
-	if (fr->fr_type == MANDEL && fr->color_type == PLAIN)
+	if (fr->fr_type == MANDEL && fr->color_type == 0)
 		return (get_mandelbrot_pixel_plain);
-	else if (fr->fr_type == JULIA && fr->color_type == PLAIN)
+	else if (fr->fr_type == JULIA && fr->color_type == 0)
 		return (get_julia_pixel_plain);
-	else if (fr->fr_type == MANDEL && fr->color_type == MODULO)
+	else if (fr->fr_type == SHIP && fr->color_type == 0)
+		return (get_ship_pixel);
+	else if (fr->fr_type == MANDEL && fr->color_type == 1)
 		return (get_mandelbrot_pixel_modulo);
-	else if (fr->fr_type == JULIA && fr->color_type == MODULO)
+	else if (fr->fr_type == JULIA && fr->color_type == 1)
 		return (get_julia_pixel_orbit);
-	else if (fr->fr_type == MANDEL && fr->color_type == SMOOTH)
+	else if (fr->fr_type == MANDEL && fr->color_type == 2)
 		return (get_mandelbrot_pixel_smooth);
+	else if (fr->fr_type == JULIA && fr->color_type == 2)
+		return (get_julia_pixel_smooth);
 	else
 		return (get_mandelbrot_pixel_plain);
 }
@@ -173,8 +213,13 @@ void	draw_fractal(t_imgdata *im, t_frdata *fr)
 		{
 			lx = (x - (double) im->width / 2) * fr->zoom * ASPECT / im->width - fr->x;
 			ly = (y - (double) im->height / 2) * fr->zoom / im->height - fr->y;
+			// if (ly > 0.0)
+			// 	color = 0xFF;
+			// else
+			// 	color = 0x0;
 			color = func(fr, lx, ly);
 			img_put_pixel(im, x, im->height - y - 1, color);
+			// img_put_pixel(im, x, im->height - y - 1, color);
 		}
 	}
 }
@@ -269,6 +314,7 @@ void	set_default_params(t_frdata *fr)
 
 	fr->c_re = 0.4;
 	fr->c_im = 0.15;
+	printf("Set default fractal parameters.\n");
 }
 
 void	change_max_iter(t_frdata *fr, int direction)
@@ -321,8 +367,8 @@ int	main(int argc, char *argv[])
 	img.height = VIEW_H;
 
 	t_frdata fractal;
-	fractal.fr_type = JULIA;
-	fractal.color_type = PLAIN;
+	fractal.fr_type = MANDEL;
+	fractal.color_type = 0;
 	set_default_params(&fractal);
 
 	t_app app;
