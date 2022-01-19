@@ -16,7 +16,7 @@ OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # TODO
 CC			:= clang
-CPPFLAGS	:= -I include -MMD -MP
+CPPFLAGS	:= -I include -I $(LIBFT_DIR) -I $(MLX_DIR) -MMD -MP
 CFLAGS		:= -g -Wall -O3#-Werror -Wextra
 LDFLAGS		:= -L$(LIB_DIR)
 LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
@@ -35,8 +35,7 @@ $(LIBMLX): $(LIB_DIR)
 	$(MAKE) --directory=$(MLX_DIR)
 	cp $(MLX_DIR)/libmlx.a $(LIB_DIR)
 
-# TODO rebulid libft and libmlx
-$(NAME): $(OBJ)#$(LIBFT) $(LIBMLX)
+$(NAME): $(OBJ) $(LIBFT) $(LIBMLX)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
