@@ -1,6 +1,6 @@
 #include <mlx_utils.h>
 
-unsigned int	rgb_to_int(unsigned char r, unsigned char g, unsigned char b)
+unsigned int	rgb_to_int(double r, double g, double b)
 {
 	unsigned int	color;
 

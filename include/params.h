@@ -17,7 +17,7 @@
 
 #define COLOR_TYPES 3
 #define PLAIN 0
-#define ORBIT 1
-#define ACID 2
+#define MODULO 1
+#define SMOOTH 2
 
 #endif
