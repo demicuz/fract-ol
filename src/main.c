@@ -6,6 +6,18 @@
 #include <utils.h>
 #include <params.h>
 
+void	set_default_params(t_frdata *fr)
+{
+	fr->zoom = 4.0;
+	fr->x = 0.0;
+	fr->y = 0.0;
+	fr->max_iter = MAX_ITER;
+
+	// fr->c_re = 0.4;
+	// fr->c_im = 0.15;
+	printf("Set default fractal parameters.\n");
+}
+
 // For some reason can't pass by reference. Here we are with *re * *re madness
 void	square_plus_c(double *re, double *im, double c_re, double c_im)
 {
@@ -350,18 +362,6 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 	else if (keycode == LEFT_CLICK && app->fractal->fr_type == JULIA)
 		set_fractal_constant(x, y, app);
 	return (0);
-}
-
-void	set_default_params(t_frdata *fr)
-{
-	fr->zoom = 4.0;
-	fr->x = 0.0;
-	fr->y = 0.0;
-	fr->max_iter = MAX_ITER;
-
-	// fr->c_re = 0.4;
-	// fr->c_im = 0.15;
-	printf("Set default fractal parameters.\n");
 }
 
 void	change_max_iter(t_frdata *fr, int direction)
