@@ -36,7 +36,7 @@ int	is_valid_float(char *s)
 	return (*s == '\0');
 }
 
-double	str_to_floating_point(char *s)
+double	parse_float(char *s)
 {
 	double r;
 	double power;

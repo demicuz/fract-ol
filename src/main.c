@@ -1,6 +1,4 @@
-#include "mlx_utils.h"
 #include <stdio.h>
-// #include <unistd.h>
 #include <math.h>
 #include <libft.h>
 #include <mlx.h>
@@ -105,11 +103,8 @@ t_color	get_mandelbrot_pixel_modulo(t_frdata *fr, double c_re, double c_im)
 	double	re = c_re;
 	double	im = c_im;
 
-	while (iter < fr->max_iter)
+	while (iter < fr->max_iter && re * re + im * im < 40.0)
 	{
-		if (re * re + im * im > 40.0)
-			break;
-		// return 0xFFFFFF;
 		square_plus_c(&re, &im, c_re, c_im);
 		iter++;
 	}
@@ -143,7 +138,7 @@ t_color	get_mandelbrot_pixel_smooth(t_frdata *fr, double c_re, double c_im)
 	return (rgb_to_int(r * 255.0, r * r * 255.0, r * r * r * 255.0));
 }
 
-t_color get_ship_pixel(t_frdata *fr, double c_re, double c_im)
+t_color get_ship_pixel_plain(t_frdata *fr, double c_re, double c_im)
 {
 	int		iter;
 	double	re;
@@ -171,6 +166,56 @@ t_color get_ship_pixel(t_frdata *fr, double c_re, double c_im)
 	return 0x000000;
 }
 
+t_color	get_ship_pixel_modulo(t_frdata *fr, double c_re, double c_im)
+{
+	int		iter;
+	double	re;
+	double	im;
+
+	iter = 0;
+	re = c_re;
+	im = -c_im;
+	c_im = -c_im;
+	while (iter < fr->max_iter && re * re + im * im < 40.0)
+	{
+		re = fabs(re);
+		im = fabs(im);
+		square_plus_c(&re, &im, c_re, c_im);
+		iter++;
+	}
+	iter %= 20;
+	if (iter >= 10)
+		iter = -iter + 20;
+	double q = iter / 10.0;
+	return rgb_to_int(q * 0x9C, q * 0x9C, q * 0xFF);
+}
+
+t_color	get_ship_pixel_smooth(t_frdata *fr, double c_re, double c_im)
+{
+	int		iter;
+	double	re;
+	double	im;
+	double	r;
+
+	iter = 0;
+	re = -c_re;
+	im = -c_im;
+	c_im = -c_im;
+	while (iter < fr->max_iter && re * re + im * im < 40.0)
+	{
+		re = fabs(re);
+		im = fabs(im);
+		square_plus_c(&re, &im, c_re, c_im);
+		iter++;
+	}
+	if (iter > fr->max_iter - 1)
+		return 0xFFFFFF;
+	r = (re * re + im * im);
+	r = iter - log2(log2(r / 2.0)) + 4.0;
+	r /= fr->max_iter;
+	return (rgb_to_int(r * 255.0, r * r * 255.0, r * r * r * 255.0));
+}
+
 t_pixel_func	get_pixel_func(t_frdata *fr)
 {
 	if (fr->fr_type == MANDEL && fr->color_type == 0)
@@ -178,15 +223,19 @@ t_pixel_func	get_pixel_func(t_frdata *fr)
 	else if (fr->fr_type == JULIA && fr->color_type == 0)
 		return (get_julia_pixel_plain);
 	else if (fr->fr_type == SHIP && fr->color_type == 0)
-		return (get_ship_pixel);
+		return (get_ship_pixel_plain);
 	else if (fr->fr_type == MANDEL && fr->color_type == 1)
 		return (get_mandelbrot_pixel_modulo);
 	else if (fr->fr_type == JULIA && fr->color_type == 1)
 		return (get_julia_pixel_orbit);
+	else if (fr->fr_type == SHIP && fr->color_type == 1)
+		return (get_ship_pixel_modulo);
 	else if (fr->fr_type == MANDEL && fr->color_type == 2)
 		return (get_mandelbrot_pixel_smooth);
 	else if (fr->fr_type == JULIA && fr->color_type == 2)
 		return (get_julia_pixel_smooth);
+	else if (fr->fr_type == SHIP && fr->color_type == 2)
+		return (get_ship_pixel_smooth);
 	else
 		return (get_mandelbrot_pixel_plain);
 }
@@ -298,7 +347,7 @@ int	mouse_hook(int keycode, int x, int y, t_app *app)
 		zoom_in(x, y, app);
 	else if (keycode == WHEEL_DOWN)
 		zoom_out(x, y, app);
-	else if (keycode == LEFT_CLICK)
+	else if (keycode == LEFT_CLICK && app->fractal->fr_type == JULIA)
 		set_fractal_constant(x, y, app);
 	return (0);
 }
@@ -310,8 +359,8 @@ void	set_default_params(t_frdata *fr)
 	fr->y = 0.0;
 	fr->max_iter = MAX_ITER;
 
-	fr->c_re = 0.4;
-	fr->c_im = 0.15;
+	// fr->c_re = 0.4;
+	// fr->c_im = 0.15;
 	printf("Set default fractal parameters.\n");
 }
 
@@ -365,6 +414,14 @@ int	key_hook(int keycode, t_app *app)
 	return (0);
 }
 
+// For some reason mlx_destroy_display() leads to sigsegv in _XReadEvents()
+int off(t_app *app)
+{
+	printf("Closing application\n");
+	exit(0);
+	return (0);
+}
+
 int	init_app(t_app *a)
 {
 	a->img->img_ptr = mlx_new_image(a->mlx, VIEW_W, VIEW_H);
@@ -378,6 +435,7 @@ int	init_app(t_app *a)
 
 	mlx_mouse_hook(a->win, mouse_hook, a);
 	mlx_key_hook(a->win, key_hook, a);
+	mlx_hook(a->win, 17, (1L<<2), off, a);
 
 	update_window(a);
 	return (1);
@@ -396,8 +454,13 @@ int	parse_arguments(int argc, char *argv[], t_frdata *fr)
 	else
 		return (0);
 	// TODO
-	// if (argc == 3 && fr->fr_type == JULIA)
-
+	if (argc == 4 && fr->fr_type == JULIA)
+	{
+		if (!is_valid_float(argv[2]) || !is_valid_float(argv[3]))
+			return (0);
+		fr->c_re = parse_float(argv[2]);
+		fr->c_im = parse_float(argv[3]);
+	}
 	return (1);
 }
 

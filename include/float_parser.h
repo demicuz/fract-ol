@@ -16,6 +16,6 @@
 #include <libft.h>
 
 int	is_valid_float(char *s);
-double	str_to_floating_point(char *s);
+double	parse_float(char *s);
 
 #endif
