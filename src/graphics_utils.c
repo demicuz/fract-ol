@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "types.h"
 #include <fractol.h>
 
 // Hardcoded 32 bits per pixel, little-endian
