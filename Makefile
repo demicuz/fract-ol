@@ -18,7 +18,7 @@ OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # TODO
 CC			:= clang
 CPPFLAGS	:= -I include -I $(LIBFT_DIR) -I $(MLX_DIR) -MMD -MP
-CFLAGS		:= -g -O3#-Wall -Werror -Wextra
+CFLAGS		:= -g -O3 -Wall -Werror -Wextra
 LDFLAGS		:= -L$(LIB_DIR)
 LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
 
