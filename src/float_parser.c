@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <float_parser.h>
+#include <fractol.h>
 
 // Horrible, horrible code. But gets the thing done.
 int	is_valid_float(char *s)
 {
-	int max_digits;
+	int	max_digits;
 
 	max_digits = 6;
 	if (s && *s == '-')
@@ -38,9 +38,9 @@ int	is_valid_float(char *s)
 
 double	parse_float(char *s)
 {
-	double r;
-	double power;
-	double sign;
+	double	r;
+	double	power;
+	double	sign;
 
 	r = 1.0;
 	power = 0.1;

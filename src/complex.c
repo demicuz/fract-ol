@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MLX_UTILS_H
-# define MLX_UTILS_H
+// For some reason can't pass by reference. Here we are with *re * *re madness
+void	square_plus_c(double *re, double *im, double c_re, double c_im)
+{
+	double	re_prev;
 
-#include <types.h>
-
-void			img_put_pixel(t_imgdata *data, int x, int y, unsigned int color);
-unsigned int	rgb_to_int(double r, double g, double b);
-
-#endif
+	re_prev = *re;
+	*re = *re * *re - *im * *im + c_re;
+	*im = 2.0 * re_prev * *im + c_im;
+}

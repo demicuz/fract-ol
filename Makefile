@@ -10,14 +10,15 @@ MLX_DIR		:= minilibx-linux
 LIBFT		:= $(LIB_DIR)/libft.a
 LIBMLX		:= $(LIB_DIR)/libmlx.a
 
-SRC_FILES	:= main.c mlx_utils.c float_parser.c
+SRC_FILES	:= complex.c float_parser.c graphics_utils.c julia.c keyboard.c \
+               main.c mandelbrot.c mouse.c ship.c
 SRC			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # TODO
 CC			:= clang
 CPPFLAGS	:= -I include -I $(LIBFT_DIR) -I $(MLX_DIR) -MMD -MP
-CFLAGS		:= -g -Wall -O3#-Werror -Wextra
+CFLAGS		:= -g -O3#-Wall -Werror -Wextra
 LDFLAGS		:= -L$(LIB_DIR)
 LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
 
