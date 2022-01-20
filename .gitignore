@@ -6,9 +6,9 @@ fract-ol
 *.sublime-workspace
 *.o
 *.sh
+*.a
 
 configure
 LICENSE
 Makefile.gen
 Makefile.mk
-#TODO remove compiled libs from repo
