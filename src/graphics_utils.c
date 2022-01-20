@@ -38,7 +38,6 @@ void	img_put_pixel(t_imgdata *data, int x, int y, unsigned int color)
 
 	dst = (t_color *)data->addr + (y * data->width + x);
 	*dst = color;
-	// *dst = 0xFF;
 }
 
 t_pfunc	get_pixel_func(t_frdata *fr)
