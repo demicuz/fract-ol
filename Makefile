@@ -15,10 +15,9 @@ SRC_FILES	:= complex.c float_parser.c graphics_utils.c julia.c keyboard.c \
 SRC			:= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ			:= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-# TODO
-CC			:= clang
+CC			:= cc
 CPPFLAGS	:= -I include -I $(LIBFT_DIR) -I $(MLX_DIR) -MMD -MP
-CFLAGS		:= -g -O3 -Wall -Werror -Wextra
+CFLAGS		:= -O3 -Wall -Werror -Wextra
 LDFLAGS		:= -L$(LIB_DIR)
 LDLIBS		:= -lft -lmlx -lXext -lX11 -lm -lz
 

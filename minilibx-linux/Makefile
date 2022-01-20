@@ -14,8 +14,8 @@ INC=/usr/include
 
 
 UNAME = $(shell uname)
-#TODO
-CC	= clang
+
+CC	= gcc
 ifeq ($(UNAME),FreeBSD)
 	CC = clang
 endif
@@ -37,8 +37,8 @@ SRC	= mlx_init.c mlx_new_window.c mlx_pixel_put.c mlx_loop.c \
 
 OBJ_DIR = obj
 OBJ	= $(addprefix $(OBJ_DIR)/,$(SRC:%.c=%.o))
-# TODO remove -g
-CFLAGS	= -g -O3 -I$(INC)
+
+CFLAGS	= -O3 -I$(INC)
 
 all	: $(NAME)
 
